@@ -27,7 +27,7 @@ const comedyPodcasts = [
     {
         channelId: 'UCTeIxzkL9QZ2noyLVUNfXJg',
         channelName: 'Chris D\'Elia',
-        storeUrl: 'https://store.chrisdelia.com', // single page
+        storeUrl: 'https://store.chrisdelia.com', // multi page
     },
     {
         channelId: 'UC6AbsTfBMQ_dHjtipwh3bZg',

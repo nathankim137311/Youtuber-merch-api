@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
-const { db } = require('./database');
+// const { db } = require('./database');
 const { v4: uuidv4 } = require('uuid');
 
+// insert data into table Merch
 function insertProductData(products) {
     products.forEach(product => {
         db.query(
@@ -15,6 +16,7 @@ function insertProductData(products) {
     }); 
 }
 
+// multiple pages 
 async function tigerBelly() {
     const extractProducts = async (url) => {
         const page = await browser.newPage();
@@ -58,31 +60,207 @@ async function tigerBelly() {
     const products = await extractProducts(url); 
 
     // Iterate through products and insert property values into table
-    insertProductData(products); 
+    // insertProductData(products); 
 
     browser.close();
 }
 
-// async function YourMomsHousePodcast() {
+async function YourMomsHousePodcast() {
+    const extractProducts = async (url) => {
+        const page = await browser.newPage();
+        await page.goto(url);
+        console.log(`scraping: ${url}`);
+        
+        const productsOnPage = await page.evaluate(() => {
+            return [...document.querySelectorAll('figure.product-grid-item--center')].map(element => {
+                return {
+                    id: '',
+                    title: element.querySelector('figcaption a').textContent,
+                    price: element.querySelector('figcaption span.money').textContent.replace(/\$/g, ''), 
+                    imgSrc: element.querySelector('img.product_card__image') === null ? '' : element.querySelector('img.product_card__image').getAttribute('data-fallback'), 
+                }
+            });
+        });
+            
+        productsOnPage.forEach(product => product.id = uuidv4());
+
+        await page.close();
+
+        if (productsOnPage.length < 1) {
+            return productsOnPage
+        } else {
+            const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
+            const nextUrl = `https://store.ymhstudios.com/collections/all-products?page=${nextPageNumber}`; 
+            return productsOnPage.concat(await extractProducts(nextUrl));
+        }
+    }
+    const browser = await puppeteer.launch();
+    const url = 'https://store.ymhstudios.com/collections/all-products?page=1';
+    const products = await extractProducts(url); 
+
+    // Iterate through products and insert property values into table
+    // insertProductData(products); 
+
+    console.log(products.length);
+
+    browser.close();
+}
+
+async function PowerfulJRE() {
+    const extractProducts = async (url) => {
+        const page = await browser.newPage();
+        await page.goto(url);
+        console.log(`scraping: ${url}`);
+        
+        const productsOnPage = await page.evaluate(() => {
+            return [...document.querySelectorAll('a.product-card')].map(element => {
+                return {
+                    id: '',
+                    title: element.querySelector('div.product-card__name').textContent,
+                    price: element.querySelector('div.product-card__price').textContent.replace(/[\n\s+\$]/g, ''),
+                    imgSrc: element.querySelector('img.product-card__image').src, 
+                }
+            });
+        });
+            
+        productsOnPage.forEach(product => product.id = uuidv4());
+
+        await page.close();
+
+        if (productsOnPage.length < 1) {
+            return productsOnPage
+        } else {
+            const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
+            console.log(nextPageNumber);
+            const nextUrl = `https://www.higherprimate.com/collections/all-products?page=${nextPageNumber}`; 
+            return productsOnPage.concat(await extractProducts(nextUrl));
+        }
+    }
+    const browser = await puppeteer.launch();
+    const url = 'https://www.higherprimate.com/collections/all-products?page=1';
+    const products = await extractProducts(url); 
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close(); 
+}
+
+// single page
+async function ScissorBros() {
+    const browser = await puppeteer.launch();
+    const url = 'https://shop.upstatemerch.com/scissorbros/shop/home?page=1';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(() => {
+        return [...document.querySelectorAll('div[class="grid-x small-up-2 medium-up-1 product-card p-a-1 p-b-2 columns-3"]')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('p.product-name').textContent,
+                price: element.querySelector('p.product-price').textContent.replace(/[\$\s+]/g,''),
+                imgSrc: element.querySelector('div.product-image-wrap > img').src,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close(); 
+}
+
+// need to get images from site
+async function TheoVon() {
+    const browser = await puppeteer.launch();
+    const url = 'https://www.theovonstore.com/collections/shop-all?page=1';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(() => {
+        return [...document.querySelectorAll('div.ProductItem')].map(element => {
+
+            return {
+                id: '',
+                title: element.querySelector('h2.ProductItem__Title > a').textContent,
+                price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
+                imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc, 
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();
+}
+
+async function ChrisDelia() {
+    const extractProducts = async (url) => {
+        const page = await browser.newPage();
+        await page.goto(url);
+        console.log(`scraping: ${url}`); 
+        const productsOnPage = await page.evaluate(() => (
+            [...document.querySelectorAll('div.grid_wrapper.product-loop > div')].map(item => {
+                
+                return {
+                    id: '', 
+                    title: item.querySelector('a.js-product-details-link > h3').textContent,
+                    price: item.querySelector('span.price-item.price-item--regular').textContent.replace(/[\n\$]/g, ''),
+                    imgSrc: item.querySelector('div.box-ratio > img').getAttribute('data-original'), 
+                }
+            })
+        ));
+
+        // Each product id property is assigned a random id
+        productsOnPage.forEach(product => product.id = uuidv4());
+
+        await page.close();
+
+        if (productsOnPage.length < 1) {
+            return productsOnPage
+        } else {
+            const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
+            const nextUrl = `https://store.chrisdelia.com/collections/shop-all?page=${nextPageNumber}`; 
+            return productsOnPage.concat(await extractProducts(nextUrl));
+        }
+    }
+    const browser = await puppeteer.launch();
+    const url = 'https://store.chrisdelia.com/collections/shop-all?page=1'; 
+    const products = await extractProducts(url); 
+    
+    console.log(products);
+    console.log(products.length);
+    // Iterate through products and insert property values into table
+    // insertProductData(products); 
+
+    browser.close();
+}
+
+
+
+ChrisDelia(); 
+
+// multi page function template 
+// async function name() {
 //     const extractProducts = async (url) => {
 //         const page = await browser.newPage();
 //         await page.goto(url);
 //         console.log(`scraping: ${url}`); 
 //         const productsOnPage = await page.evaluate(() => (
-//             [...document.querySelectorAll('div[class="box product"]')].map(item => {
-//                 const parser = new DOMParser();
-//                 const doc = parser.parseFromString(document.querySelector('noscript'), 'text/html');
-//                 console.log(doc); 
+//             [...document.querySelectorAll('')].map(item => {
                 
 //                 return {
 //                     id: '', 
-//                     channelId: '',
-//                     title: '',
-//                     // title: item.querySelector('a[class="title"]').textContent,
-//                     price: '',
-//                     // price: item.querySelector('span[class="money"]').textContent.replace(/\$/g, ''),  
-//                     // imgSrc: item.querySelector('').src, 
-//                     imgSrc: doc.textContent, // returns null  
+//                     title: item.querySelector('').textContent,
+//                     price: item.querySelector('').textContent,  
+//                     imgSrc: item.querySelector('').src, 
 //                 }
 //             })
 //         ));
@@ -91,51 +269,50 @@ async function tigerBelly() {
 //         productsOnPage.forEach(product => product.id = uuidv4());
 
 //         await page.close();
+
 //         if (productsOnPage.length < 1) {
 //             return productsOnPage
 //         } else {
 //             const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
-//             console.log(nextPageNumber);
-//             const nextUrl = `https://store.ymhstudios.com/collections/all-products?page=${nextPageNumber}`; 
+//             const nextUrl = `url?page=${nextPageNumber}`; 
 //             return productsOnPage.concat(await extractProducts(nextUrl));
 //         }
 //     }
-
 //     const browser = await puppeteer.launch();
-//     const url = 'https://store.ymhstudios.com/collections/all-products?page=1'; 
+//     const url = 'url'; 
 //     const products = await extractProducts(url); 
 
 //     // Iterate through products and insert property values into table
-//     insertProductData(products); 
+//     // insertProductData(products); 
 
 //     browser.close();
 // }
 
-// YourMomsHousePodcast();
-// tigerBelly();
 
-async function YourMomsHousePodcast() {
-    const browser = await puppeteer.launch();
-    const url = 'https://store.ymhstudios.com/collections/all-products?page=1';
-    const page = await browser.newPage();
-    await page.goto(url);
+// single page function template 
+// async function name() {
+//     const browser = await puppeteer.launch();
+//     const url = 'url';
+//     const page = await browser.newPage();
+//     await page.goto(url);
+//     console.log(`scraping: ${url}`);
 
-    const products = await page.evaluate(() => {
-        return [...document.querySelectorAll('figure.product-grid-item--center')].map(element => {
-            return {
-                id: '',
-                title: element.querySelector('figcaption a').textContent,
-                price: element.querySelector('figcaption span.money').textContent.replace(/\$/g, ''), 
-                imgSrc: element.querySelector('img.product_card__image') === null ? '' : element.querySelector('img.product_card__image').getAttribute('data-fallback'), 
-            }
-        });
-    });
+//     const products = await page.evaluate(() => {
+//         return [...document.querySelectorAll('')].map(element => {
+//             return {
+//                 id: '',
+//                 title: element.querySelector('').textContent,
+//                 price: element.querySelector('').textContent,
+//                 imgSrc: element.querySelector('').src,
+//             }
+//         });
+//     });; 
 
-    products.forEach(product => product.id = uuidv4());
+//     products.forEach(product => product.id = uuidv4());
 
-    console.log(products.length);
-    browser.close();
-    return
-}
+//     console.log(products); 
+//     console.log(products.length); 
 
-YourMomsHousePodcast();
+//     browser.close();
+// }
+
