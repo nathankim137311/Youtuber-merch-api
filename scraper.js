@@ -146,61 +146,6 @@ async function PowerfulJRE() {
     browser.close(); 
 }
 
-// single page
-async function ScissorBros() {
-    const browser = await puppeteer.launch();
-    const url = 'https://shop.upstatemerch.com/scissorbros/shop/home?page=1';
-    const page = await browser.newPage();
-    await page.goto(url);
-    console.log(`scraping: ${url}`);
-
-    const products = await page.evaluate(() => {
-        return [...document.querySelectorAll('div[class="grid-x small-up-2 medium-up-1 product-card p-a-1 p-b-2 columns-3"]')].map(element => {
-            return {
-                id: '',
-                title: element.querySelector('p.product-name').textContent,
-                price: element.querySelector('p.product-price').textContent.replace(/[\$\s+]/g,''),
-                imgSrc: element.querySelector('div.product-image-wrap > img').src,
-            }
-        });
-    });; 
-
-    products.forEach(product => product.id = uuidv4());
-
-    console.log(products); 
-    console.log(products.length); 
-
-    browser.close(); 
-}
-
-// need to get images from site
-async function TheoVon() {
-    const browser = await puppeteer.launch();
-    const url = 'https://www.theovonstore.com/collections/shop-all?page=1';
-    const page = await browser.newPage();
-    await page.goto(url);
-    console.log(`scraping: ${url}`);
-
-    const products = await page.evaluate(() => {
-        return [...document.querySelectorAll('div.ProductItem')].map(element => {
-
-            return {
-                id: '',
-                title: element.querySelector('h2.ProductItem__Title > a').textContent,
-                price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
-                imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc, 
-            }
-        });
-    });; 
-
-    products.forEach(product => product.id = uuidv4());
-
-    console.log(products); 
-    console.log(products.length); 
-
-    browser.close();
-}
-
 async function ChrisDelia() {
     const extractProducts = async (url) => {
         const page = await browser.newPage();
@@ -243,9 +188,63 @@ async function ChrisDelia() {
     browser.close();
 }
 
+// single page
+async function ScissorBros() {
+    const browser = await puppeteer.launch();
+    const url = 'https://shop.upstatemerch.com/scissorbros/shop/home?page=1';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
 
+    const products = await page.evaluate(() => {
+        return [...document.querySelectorAll('div[class="grid-x small-up-2 medium-up-1 product-card p-a-1 p-b-2 columns-3"]')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('p.product-name').textContent,
+                price: element.querySelector('p.product-price').textContent.replace(/[\$\s+]/g,''),
+                imgSrc: element.querySelector('div.product-image-wrap > img').src,
+            }
+        });
+    });; 
 
-ChrisDelia(); 
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close(); 
+}
+
+// need to get images from site
+async function TheoVon() {
+    const browser = await puppeteer.launch();
+    const url = 'https://www.theovonstore.com/collections/shop-all?page=1';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(() => {
+        return [...document.querySelectorAll('div.ProductItem')].map(element => {
+
+            return {
+                id: '',
+                title: element.querySelector('h2.ProductItem__Title > a').textContent,
+                price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
+                imgSrc: element.querySelector('img.ProductItem__Image').dataset.src,
+                // imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc === null && element.querySelectorAll('img.ProductItem__Image')[0].dataset.src, 
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();
+}
+
+TheoVon();
 
 // multi page function template 
 // async function name() {
@@ -258,9 +257,9 @@ ChrisDelia();
                 
 //                 return {
 //                     id: '', 
-//                     title: item.querySelector('').textContent,
-//                     price: item.querySelector('').textContent,  
-//                     imgSrc: item.querySelector('').src, 
+//                     title: '',
+//                     price: '',
+//                     imgSrc: '',
 //                 }
 //             })
 //         ));
