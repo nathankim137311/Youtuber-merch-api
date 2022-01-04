@@ -358,7 +358,117 @@ async function WhitneyCummings() {
     browser.close(); 
 }
 
-WhitneyCummings();
+async function AndrewSantino() {
+    const browser = await puppeteer.launch();
+    const url = 'https://www.andrewsantinostore.com/';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(async () => {
+        // scroll to the bottom of the page
+        const distance = 300;
+        const delay = 100;
+        while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+            document.scrollingElement.scrollBy(0, distance);
+            await new Promise(resolve => { setTimeout(resolve, delay); });
+        }
+
+        return [...document.querySelectorAll('div.product-list-item')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('h4.product-list-item-title').textContent,
+                price: element.querySelector('p.product-list-item-price > span') === null ? 'SOLD OUT' : element.querySelector('p.product-list-item-price > span').textContent,
+                imgSrc: element.querySelector('a img').src,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();
+}
+
+async function AndrewSchulz() {
+    const browser = await puppeteer.launch();
+    const url = 'https://fashun.shop/collections/season-03';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(() => {
+        return [...document.querySelectorAll('div.grid__item.small--one-whole.medium--one-half.large--one-quarter.wow.fadeInUp')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('div.product-grid--title > a').textContent,
+                price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
+                imgSrc: element.querySelector('div.lazyload-wrapper > img').src,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();    
+}
+
+// multi page and scroll to load images
+async function Kats() {
+    const extractProducts = async (url) => {
+        const page = await browser.newPage();
+        await page.goto(url);
+        console.log(`scraping: ${url}`); 
+        const productsOnPage = await page.evaluate(async () => {
+            // scroll to the bottom of the page
+            const distance = 300;
+            const delay = 100;
+            while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+                document.scrollingElement.scrollBy(0, distance);
+                await new Promise(resolve => { setTimeout(resolve, delay); });
+            }
+
+            return [...document.querySelectorAll('div.ProductItem')].map(element => {
+
+                return {
+                    id: '', 
+                    title: element.querySelector('h2.ProductItem__Title.Heading > a').textContent,
+                    price: element.querySelector('div.ProductItem__PriceList.Heading > span').textContent.replace(/\$/g, ''),
+                    imgSrc: element.querySelectorAll('div.AspectRatio.AspectRatio--withFallback > img')[0].dataset.src,
+                }
+            })
+        });
+
+        // Each product id property is assigned a random id
+        productsOnPage.forEach(product => product.id = uuidv4());
+
+        await page.close();
+
+        if (productsOnPage.length < 1) {
+            return productsOnPage
+        } else {
+            const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
+            const nextUrl = `https://www.katsmerch.com/collections/shop-all?page=${nextPageNumber}`; 
+            return productsOnPage.concat(await extractProducts(nextUrl));
+        }
+    }
+    const browser = await puppeteer.launch();
+    const url = 'https://www.katsmerch.com/collections/shop-all?page=1'; 
+    const products = await extractProducts(url); 
+
+    console.log(products);
+    console.log(products.length);
+
+    // Iterate through products and insert property values into table
+    // insertProductData(products); 
+
+    browser.close();
+}
 
 // multi page function template 
 // async function name() {

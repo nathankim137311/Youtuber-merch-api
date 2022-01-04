@@ -45,11 +45,6 @@ const comedyPodcasts = [
         storeUrl: 'https://trash-tuesday.myshopify.com', // single page
     },
     {
-        channelId: 'UCYCGsNTvYxfkPkfQopRMP7w',
-        channelName: 'Rick Glassman',
-        storeUrl: 'https://www.rickglassman.com/store', // single page 
-    },
-    {
         channelId: 'UCNGbPFX8UOm7qk6kvnHKr0w',
         channelName: 'Andrew Santino',
         storeUrl: 'https://www.andrewsantinostore.com', // single page
