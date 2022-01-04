@@ -242,7 +242,6 @@ async function TheoVon() {
                 title: element.querySelector('h2.ProductItem__Title > a').textContent,
                 price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc,
-                // imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc === null && element.querySelectorAll('img.ProductItem__Image')[0].dataset.src, 
             }
         });
     });
@@ -255,7 +254,111 @@ async function TheoVon() {
     browser.close();
 }
 
-TheoVon();
+async function Tfatk() {
+    const browser = await puppeteer.launch({
+        headless: true,
+    });
+    const url = 'https://thefighterandthekidshop.com/collections/sale-home-page';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(async () => {
+        // scroll to the bottom of the page
+        const distance = 300;
+        const delay = 100;
+        while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+            document.scrollingElement.scrollBy(0, distance);
+            await new Promise(resolve => { setTimeout(resolve, delay); });
+        }
+
+        return [...document.querySelectorAll('div.product-block')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('div.product-block__title').textContent,
+                price: element.querySelector('span.product-price__item').textContent.replace(/\$/g, ''),
+                imgSrc: element.querySelector('img.rimage__image').currentSrc,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();
+}
+
+async function TrashTuesday() {
+    const browser = await puppeteer.launch();
+    const url = 'https://trash-tuesday.myshopify.com';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(async () => {
+        // scroll to the bottom of the page
+        const distance = 300;
+        const delay = 100;
+        while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+            document.scrollingElement.scrollBy(0, distance);
+            await new Promise(resolve => { setTimeout(resolve, delay); });
+        }
+
+        return [...document.querySelectorAll('div.product-item')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('p.product-item__title').textContent,
+                price: element.querySelector('p.product-item__price-wrapper').textContent.replace(/[A-Za-z\n\s+\$]/g, ''),
+                imgSrc: element.querySelector('img.product-item__image').currentSrc,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close();
+}
+
+async function WhitneyCummings() {
+    const browser = await puppeteer.launch();
+    const url = 'https://store.whitneycummings.com/collections/shop-all';
+    const page = await browser.newPage();
+    await page.goto(url);
+    console.log(`scraping: ${url}`);
+
+    const products = await page.evaluate(async () => {
+        // scroll to the bottom of the page
+        const distance = 300;
+        const delay = 100;
+        while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+            document.scrollingElement.scrollBy(0, distance);
+            await new Promise(resolve => { setTimeout(resolve, delay); });
+        }
+
+        return [...document.querySelectorAll('div.grid__item.small--one-half.medium--one-half.large--one-third.product-grid-item')].map(element => {
+            return {
+                id: '',
+                title: element.querySelector('p.h5--accent.strong.name_wrapper').textContent.trim(),
+                price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
+                imgSrc: element.querySelector('img.fade-in.lazyautosizes.lazyloaded').currentSrc,
+            }
+        });
+    });; 
+
+    products.forEach(product => product.id = uuidv4());
+
+    console.log(products); 
+    console.log(products.length); 
+
+    browser.close(); 
+}
+
+WhitneyCummings();
 
 // multi page function template 
 // async function name() {
