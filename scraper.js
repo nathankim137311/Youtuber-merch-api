@@ -215,26 +215,37 @@ async function ScissorBros() {
     browser.close(); 
 }
 
-// need to get images from site
+// single page, need to scroll to load more images
 async function TheoVon() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        headless: false, // different behaviors if true or false, why? 
+    });
     const url = 'https://www.theovonstore.com/collections/shop-all?page=1';
     const page = await browser.newPage();
     await page.goto(url);
+
     console.log(`scraping: ${url}`);
 
-    const products = await page.evaluate(() => {
+    const products = await page.evaluate(async () => {
+        // scroll to the bottom of the page
+        const distance = 300;
+        const delay = 100;
+        while (document.scrollingElement.scrollTop + window.innerHeight < document.scrollingElement.scrollHeight) {
+            document.scrollingElement.scrollBy(0, distance);
+            await new Promise(resolve => { setTimeout(resolve, delay); });
+        }
+
         return [...document.querySelectorAll('div.ProductItem')].map(element => {
 
             return {
                 id: '',
                 title: element.querySelector('h2.ProductItem__Title > a').textContent,
                 price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
-                imgSrc: element.querySelector('img.ProductItem__Image').dataset.src,
+                imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc,
                 // imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc === null && element.querySelectorAll('img.ProductItem__Image')[0].dataset.src, 
             }
         });
-    });; 
+    });
 
     products.forEach(product => product.id = uuidv4());
 
