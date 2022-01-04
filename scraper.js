@@ -1,12 +1,26 @@
 const puppeteer = require('puppeteer');
-// const { db } = require('./database');
+const { comedyPodcasts } = require('./comedyPodcasts'); 
+const { db } = require('./database');
 const { v4: uuidv4 } = require('uuid');
+
+function insertComedyPodcasts() {
+    comedyPodcasts.forEach(channel => {
+        db.query(
+            'INSERT INTO ComedyPodcasts (channel_id, channel_name, store_url) VALUES (?, ?, ?)',
+            [channel.channelId, channel.channelName, channel.storeUrl],(err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+            }
+        )
+    }); 
+}
 
 // insert data into table Merch
 function insertProductData(products) {
     products.forEach(product => {
         db.query(
-            'INSERT INTO Merch (product_id, channel_id, title, price, img_src) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO Products (product_id, channel_id, title, price, img_url) VALUES (?, ?, ?, ?, ?)',
             [product.id, product.channelId, product.title, product.price, product.imgSrc],(err, result) => {
                 if (err) {
                     console.log(err);
@@ -60,7 +74,7 @@ async function tigerBelly() {
     const products = await extractProducts(url); 
 
     // Iterate through products and insert property values into table
-    // insertProductData(products); 
+    insertProductData(products); 
 
     browser.close();
 }
@@ -75,6 +89,7 @@ async function YourMomsHousePodcast() {
             return [...document.querySelectorAll('figure.product-grid-item--center')].map(element => {
                 return {
                     id: '',
+                    channelId: 'UCYIgiXwJck_Pb5Nj-wIrsqg',
                     title: element.querySelector('figcaption a').textContent,
                     price: element.querySelector('figcaption span.money').textContent.replace(/\$/g, ''), 
                     imgSrc: element.querySelector('img.product_card__image') === null ? '' : element.querySelector('img.product_card__image').getAttribute('data-fallback'), 
@@ -99,7 +114,7 @@ async function YourMomsHousePodcast() {
     const products = await extractProducts(url); 
 
     // Iterate through products and insert property values into table
-    // insertProductData(products); 
+    insertProductData(products); 
 
     console.log(products.length);
 
@@ -116,8 +131,9 @@ async function PowerfulJRE() {
             return [...document.querySelectorAll('a.product-card')].map(element => {
                 return {
                     id: '',
+                    channelId: 'UCzQUP1qoWDoEbmsQxvdjxgQ', 
                     title: element.querySelector('div.product-card__name').textContent,
-                    price: element.querySelector('div.product-card__price').textContent.replace(/[\n\s+\$]/g, ''),
+                    price: element.querySelector('div.product-card__price').textContent.replace(/[From\n\s+\$]/g, ''),
                     imgSrc: element.querySelector('img.product-card__image').src, 
                 }
             });
@@ -140,6 +156,9 @@ async function PowerfulJRE() {
     const url = 'https://www.higherprimate.com/collections/all-products?page=1';
     const products = await extractProducts(url); 
 
+    // Iterate through products and insert property values into table
+    insertProductData(products); 
+
     console.log(products); 
     console.log(products.length); 
 
@@ -156,6 +175,7 @@ async function ChrisDelia() {
                 
                 return {
                     id: '', 
+                    channelId: 'UCTeIxzkL9QZ2noyLVUNfXJg',
                     title: item.querySelector('a.js-product-details-link > h3').textContent,
                     price: item.querySelector('span.price-item.price-item--regular').textContent.replace(/[\n\$]/g, ''),
                     imgSrc: item.querySelector('div.box-ratio > img').getAttribute('data-original'), 
@@ -179,11 +199,12 @@ async function ChrisDelia() {
     const browser = await puppeteer.launch();
     const url = 'https://store.chrisdelia.com/collections/shop-all?page=1'; 
     const products = await extractProducts(url); 
+
+    // Iterate through products and insert property values into table
+    insertProductData(products); 
     
     console.log(products);
     console.log(products.length);
-    // Iterate through products and insert property values into table
-    // insertProductData(products); 
 
     browser.close();
 }
@@ -197,9 +218,10 @@ async function ScissorBros() {
     console.log(`scraping: ${url}`);
 
     const products = await page.evaluate(() => {
-        return [...document.querySelectorAll('div[class="grid-x small-up-2 medium-up-1 product-card p-a-1 p-b-2 columns-3"]')].map(element => {
+        return [...document.querySelectorAll('div.grid-x.small-up-2.medium-up-1.product-card.p-a-1.p-b-2.columns-3')].map(element => {
             return {
                 id: '',
+                channelId: 'UCGCXWfqaovf_vI05iW6pLdA', 
                 title: element.querySelector('p.product-name').textContent,
                 price: element.querySelector('p.product-price').textContent.replace(/[\$\s+]/g,''),
                 imgSrc: element.querySelector('div.product-image-wrap > img').src,
@@ -208,6 +230,8 @@ async function ScissorBros() {
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -239,6 +263,7 @@ async function TheoVon() {
 
             return {
                 id: '',
+                channelId: 'UC5AQEUAwCh1sGDvkQtkDWUQ', 
                 title: element.querySelector('h2.ProductItem__Title > a').textContent,
                 price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc,
@@ -247,6 +272,8 @@ async function TheoVon() {
     });
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -275,6 +302,7 @@ async function Tfatk() {
         return [...document.querySelectorAll('div.product-block')].map(element => {
             return {
                 id: '',
+                channelId: 'UC6AbsTfBMQ_dHjtipwh3bZg', 
                 title: element.querySelector('div.product-block__title').textContent,
                 price: element.querySelector('span.product-price__item').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('img.rimage__image').currentSrc,
@@ -283,6 +311,8 @@ async function Tfatk() {
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -309,6 +339,7 @@ async function TrashTuesday() {
         return [...document.querySelectorAll('div.product-item')].map(element => {
             return {
                 id: '',
+                channelId: 'UC5tigjL4SYA_nWP-E8-eiBw', 
                 title: element.querySelector('p.product-item__title').textContent,
                 price: element.querySelector('p.product-item__price-wrapper').textContent.replace(/[A-Za-z\n\s+\$]/g, ''),
                 imgSrc: element.querySelector('img.product-item__image').currentSrc,
@@ -317,6 +348,8 @@ async function TrashTuesday() {
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -343,6 +376,7 @@ async function WhitneyCummings() {
         return [...document.querySelectorAll('div.grid__item.small--one-half.medium--one-half.large--one-third.product-grid-item')].map(element => {
             return {
                 id: '',
+                channelId: 'UCZa3lYPi8caXYxl5DeIzJgg', 
                 title: element.querySelector('p.h5--accent.strong.name_wrapper').textContent.trim(),
                 price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('img.fade-in.lazyautosizes.lazyloaded').currentSrc,
@@ -351,6 +385,8 @@ async function WhitneyCummings() {
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -377,14 +413,17 @@ async function AndrewSantino() {
         return [...document.querySelectorAll('div.product-list-item')].map(element => {
             return {
                 id: '',
+                channelId: 'UCNGbPFX8UOm7qk6kvnHKr0w', 
                 title: element.querySelector('h4.product-list-item-title').textContent,
-                price: element.querySelector('p.product-list-item-price > span') === null ? 'SOLD OUT' : element.querySelector('p.product-list-item-price > span').textContent,
+                price: element.querySelector('p.product-list-item-price > span') === null ? '' : element.querySelector('p.product-list-item-price > span').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('a img').src,
             }
         });
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -403,6 +442,7 @@ async function AndrewSchulz() {
         return [...document.querySelectorAll('div.grid__item.small--one-whole.medium--one-half.large--one-quarter.wow.fadeInUp')].map(element => {
             return {
                 id: '',
+                channelId: 'UCLZc32yrTEMxH1ZO-6fKOzA',
                 title: element.querySelector('div.product-grid--title > a').textContent,
                 price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('div.lazyload-wrapper > img').src,
@@ -411,6 +451,8 @@ async function AndrewSchulz() {
     });; 
 
     products.forEach(product => product.id = uuidv4());
+
+    insertProductData(products);
 
     console.log(products); 
     console.log(products.length); 
@@ -437,6 +479,7 @@ async function Kats() {
 
                 return {
                     id: '', 
+                    channelId: 'UCmUsedCabQ7ylB8mL38NYXw', 
                     title: element.querySelector('h2.ProductItem__Title.Heading > a').textContent,
                     price: element.querySelector('div.ProductItem__PriceList.Heading > span').textContent.replace(/\$/g, ''),
                     imgSrc: element.querySelectorAll('div.AspectRatio.AspectRatio--withFallback > img')[0].dataset.src,
@@ -465,77 +508,23 @@ async function Kats() {
     console.log(products.length);
 
     // Iterate through products and insert property values into table
-    // insertProductData(products); 
+    insertProductData(products); 
 
     browser.close();
 }
 
-// multi page function template 
-// async function name() {
-//     const extractProducts = async (url) => {
-//         const page = await browser.newPage();
-//         await page.goto(url);
-//         console.log(`scraping: ${url}`); 
-//         const productsOnPage = await page.evaluate(() => (
-//             [...document.querySelectorAll('')].map(item => {
-                
-//                 return {
-//                     id: '', 
-//                     title: '',
-//                     price: '',
-//                     imgSrc: '',
-//                 }
-//             })
-//         ));
+function insertAllChannels() {
+    tigerBelly(); 
+    YourMomsHousePodcast();
+    PowerfulJRE();
+    ChrisDelia();
+    ScissorBros();
+    TheoVon();
+    Tfatk();
+    TrashTuesday();
+    WhitneyCummings();
+    AndrewSantino(); 
+    AndrewSchulz();
+}
 
-//         // Each product id property is assigned a random id
-//         productsOnPage.forEach(product => product.id = uuidv4());
-
-//         await page.close();
-
-//         if (productsOnPage.length < 1) {
-//             return productsOnPage
-//         } else {
-//             const nextPageNumber = parseInt(url.match(/page=(\d+)$/)[1], 10) + 1;
-//             const nextUrl = `url?page=${nextPageNumber}`; 
-//             return productsOnPage.concat(await extractProducts(nextUrl));
-//         }
-//     }
-//     const browser = await puppeteer.launch();
-//     const url = 'url'; 
-//     const products = await extractProducts(url); 
-
-//     // Iterate through products and insert property values into table
-//     // insertProductData(products); 
-
-//     browser.close();
-// }
-
-
-// single page function template 
-// async function name() {
-//     const browser = await puppeteer.launch();
-//     const url = 'url';
-//     const page = await browser.newPage();
-//     await page.goto(url);
-//     console.log(`scraping: ${url}`);
-
-//     const products = await page.evaluate(() => {
-//         return [...document.querySelectorAll('')].map(element => {
-//             return {
-//                 id: '',
-//                 title: element.querySelector('').textContent,
-//                 price: element.querySelector('').textContent,
-//                 imgSrc: element.querySelector('').src,
-//             }
-//         });
-//     });; 
-
-//     products.forEach(product => product.id = uuidv4());
-
-//     console.log(products); 
-//     console.log(products.length); 
-
-//     browser.close();
-// }
-
+insertAllChannels();
