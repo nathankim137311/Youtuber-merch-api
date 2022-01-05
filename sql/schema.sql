@@ -1,4 +1,4 @@
-CREATE TABLE Youtubers (
+CREATE TABLE ComedyPodcasts (
 	id INT NOT NULL,
 	channel_id UNIQUE VARCHAR(50) NOT NULL,
 	channel_name VARCHAR(50) NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE Youtubers (
     PRIMARY KEY (id),
 );
 
-CREATE TABLE YoutuberMerch (
+CREATE TABLE Products (
     id INT NOT NULL,
     channel_id VARCHAR(100) NOT NULL,
     product_id VARCHAR(50) NOT NULL,
