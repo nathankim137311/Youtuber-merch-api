@@ -16,17 +16,17 @@ const comedyPodcasts = [
     },
     {
         channelId: 'UC5AQEUAwCh1sGDvkQtkDWUQ',
-        channelName: 'Theo Von',
+        channelName: 'TheoVon',
         storeUrl: 'https://www.theovonstore.com', // single page
     },
     {
         channelId: 'UCTeIxzkL9QZ2noyLVUNfXJg',
-        channelName: 'Chris D\'Elia',
+        channelName: 'ChrisD\'Elia',
         storeUrl: 'https://store.chrisdelia.com', // multi page
     },
     {
         channelId: 'UC6AbsTfBMQ_dHjtipwh3bZg',
-        channelName: 'The Fighter and The Kid',
+        channelName: 'TheFighterandTheKid',
         storeUrl: 'https://thefighterandthekidshop.com', // single page
     },
     {
@@ -36,27 +36,27 @@ const comedyPodcasts = [
     },
     {
         channelId: 'UC5tigjL4SYA_nWP-E8-eiBw',
-        channelName: 'Trash Tuesday',
+        channelName: 'TrashTuesday',
         storeUrl: 'https://trash-tuesday.myshopify.com', // single page
     },
     {
         channelId: 'UCNGbPFX8UOm7qk6kvnHKr0w',
-        channelName: 'Andrew Santino',
+        channelName: 'AndrewSantino',
         storeUrl: 'https://www.andrewsantinostore.com', // single page
     },
     {
         channelId: 'UCLZc32yrTEMxH1ZO-6fKOzA',
-        channelName: 'The Andrew Schulz',
+        channelName: 'TheAndrewSchulz',
         storeUrl: 'https://fashun.shop', // single page
     },
     {
         channelId: 'UCmUsedCabQ7ylB8mL38NYXw',
-        channelName: 'King and the Sting',
+        channelName: 'KingandtheSting',
         storeUrl: 'https://www.katsmerch.com', // single page 
     },
     {
         channelId: 'UCZa3lYPi8caXYxl5DeIzJgg',
-        channelName: 'Whitney Cummings',
+        channelName: 'WhitneyCummings',
         storeUrl: 'https://whitneycummings.com',
     }
 ];

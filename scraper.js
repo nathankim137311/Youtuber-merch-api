@@ -179,7 +179,7 @@ async function ChrisDelia() {
                 return {
                     id: '', 
                     channelId: 'UCTeIxzkL9QZ2noyLVUNfXJg',
-                    channelName: 'Chris D\'Elia',
+                    channelName: 'ChrisDelia',
                     title: item.querySelector('a.js-product-details-link > h3').textContent,
                     price: item.querySelector('span.price-item.price-item--regular').textContent.replace(/[\n\$]/g, ''),
                     imgSrc: item.querySelector('div.box-ratio > img').getAttribute('data-original'), 
@@ -269,7 +269,7 @@ async function TheoVon() {
             return {
                 id: '',
                 channelId: 'UC5AQEUAwCh1sGDvkQtkDWUQ', 
-                channelName: 'Theo Von',
+                channelName: 'TheoVon',
                 title: element.querySelector('h2.ProductItem__Title > a').textContent,
                 price: element.querySelector('span.ProductItem__Price').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelectorAll('img.ProductItem__Image')[0].currentSrc,
@@ -309,7 +309,7 @@ async function Tfatk() {
             return {
                 id: '',
                 channelId: 'UC6AbsTfBMQ_dHjtipwh3bZg',
-                channelName: 'The Fighter and The Kid', 
+                channelName: 'TheFighterandTheKid', 
                 title: element.querySelector('div.product-block__title').textContent,
                 price: element.querySelector('span.product-price__item').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('img.rimage__image').currentSrc,
@@ -347,7 +347,7 @@ async function TrashTuesday() {
             return {
                 id: '',
                 channelId: 'UC5tigjL4SYA_nWP-E8-eiBw', 
-                channelName: 'Trash Tuesday',
+                channelName: 'TrashTuesday',
                 title: element.querySelector('p.product-item__title').textContent,
                 price: element.querySelector('p.product-item__price-wrapper').textContent.replace(/[A-Za-z\n\s+\$]/g, ''),
                 imgSrc: element.querySelector('img.product-item__image').currentSrc,
@@ -385,7 +385,7 @@ async function WhitneyCummings() {
             return {
                 id: '',
                 channelId: 'UCZa3lYPi8caXYxl5DeIzJgg', 
-                channelName: 'Whitney Cummings',
+                channelName: 'WhitneyCummings',
                 title: element.querySelector('p.h5--accent.strong.name_wrapper').textContent.trim(),
                 price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('img.fade-in.lazyautosizes.lazyloaded').currentSrc,
@@ -423,7 +423,7 @@ async function AndrewSantino() {
             return {
                 id: '',
                 channelId: 'UCNGbPFX8UOm7qk6kvnHKr0w', 
-                channelName: 'Andrew Santino',
+                channelName: 'AndrewSantino',
                 title: element.querySelector('h4.product-list-item-title').textContent,
                 price: element.querySelector('p.product-list-item-price > span') === null ? '' : element.querySelector('p.product-list-item-price > span').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('a img').src,
@@ -453,7 +453,7 @@ async function AndrewSchulz() {
             return {
                 id: '',
                 channelId: 'UCLZc32yrTEMxH1ZO-6fKOzA',
-                channelName: 'The Andrew Schulz',
+                channelName: 'TheAndrewSchulz',
                 title: element.querySelector('div.product-grid--title > a').textContent,
                 price: element.querySelector('span.money').textContent.replace(/\$/g, ''),
                 imgSrc: element.querySelector('div.lazyload-wrapper > img').src,
@@ -491,7 +491,7 @@ async function Kats() {
                 return {
                     id: '', 
                     channelId: 'UCmUsedCabQ7ylB8mL38NYXw', 
-                    channelName: 'King and the Sting',
+                    channelName: 'KingandtheSting',
                     title: element.querySelector('h2.ProductItem__Title.Heading > a').textContent,
                     price: element.querySelector('div.ProductItem__PriceList.Heading > span').textContent.replace(/\$/g, ''),
                     imgSrc: element.querySelectorAll('div.AspectRatio.AspectRatio--withFallback > img')[0].dataset.src,
@@ -540,4 +540,5 @@ function insertAllChannels() {
     Kats();
 }
 
-insertAllChannels();
+// insertComedyPodcasts();
+// insertAllChannels();
