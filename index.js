@@ -58,4 +58,5 @@ app.get('/api/all-products', (req, res) => {
     });
 });
 
-app.listen(PORT, () => console.log(`server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`server running on port ${PORT}`));
+server.keepAliveTimeout = 61 * 1000;
